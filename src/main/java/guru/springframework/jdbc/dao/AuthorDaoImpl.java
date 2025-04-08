@@ -1,35 +1,58 @@
 package guru.springframework.jdbc.dao;
 
 import guru.springframework.jdbc.domain.Author;
+import guru.springframework.jdbc.repositories.AuthorRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 /**
  * Created by jt on 8/28/21.
  */
 @Component
 public class AuthorDaoImpl implements AuthorDao {
+
+    private final AuthorRepository authorRepository;
+
+    public AuthorDaoImpl(AuthorRepository authorRepository) {
+        this.authorRepository = authorRepository;
+    }
+
     @Override
     public Author getById(Long id) {
-        return null;
+        Optional<Author> author = authorRepository.findById(id);
+        return author.orElseThrow(() ->
+                new EntityNotFoundException("Author not found"));
     }
 
     @Override
     public Author findAuthorByName(String firstName, String lastName) {
-        return null;
+        return authorRepository.findAuthorByFirstNameAndLastName(firstName, lastName)
+                .orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
     public Author saveNewAuthor(Author author) {
-        return null;
+        return authorRepository.save(author);
     }
 
+    @Transactional
     @Override
     public Author updateAuthor(Author author) {
-        return null;
+        Author authorFound = authorRepository.findById(author.getId()).orElseThrow(() ->
+                new EntityNotFoundException("Author not found"));
+
+        authorFound.setFirstName(author.getFirstName());
+        authorFound.setLastName(author.getLastName());
+
+        authorRepository.save(authorFound);
+        return authorFound;
     }
 
     @Override
     public void deleteAuthorById(Long id) {
-
+        authorRepository.deleteById(id);
     }
 }
