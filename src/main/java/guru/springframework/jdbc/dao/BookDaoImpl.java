@@ -4,7 +4,11 @@ import guru.springframework.jdbc.domain.Author;
 import guru.springframework.jdbc.domain.Book;
 import guru.springframework.jdbc.repositories.BookRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class BookDaoImpl implements BookDao {
@@ -25,6 +29,17 @@ public class BookDaoImpl implements BookDao {
     public Book findBookByTitle(String title) {
         return bookRepository.findBookByTitle(title)
                 .orElseThrow(EntityNotFoundException::new);
+    }
+
+    @Override
+    public List<Book> findAllBooks(Pageable pageable) {
+        return bookRepository.findAll(pageable).getContent();
+    }
+
+    @Override
+    public List<Book> findAllBooksSortByTitle(Pageable pageable) {
+        Page<Book> bookPage = bookRepository.findAll(pageable);
+        return bookPage.getContent();
     }
 
     @Override

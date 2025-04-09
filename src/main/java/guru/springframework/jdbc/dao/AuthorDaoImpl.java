@@ -3,9 +3,11 @@ package guru.springframework.jdbc.dao;
 import guru.springframework.jdbc.domain.Author;
 import guru.springframework.jdbc.repositories.AuthorRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -31,6 +33,11 @@ public class AuthorDaoImpl implements AuthorDao {
     public Author findAuthorByName(String firstName, String lastName) {
         return authorRepository.findAuthorByFirstNameAndLastName(firstName, lastName)
                 .orElseThrow(EntityNotFoundException::new);
+    }
+
+    @Override
+    public List<Author> findAuthorByLastName(String lastName, Pageable pageable) {
+        return authorRepository.findAuthorByLastName(lastName, pageable).getContent();
     }
 
     @Override
