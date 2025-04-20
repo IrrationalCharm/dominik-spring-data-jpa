@@ -28,6 +28,13 @@ public class BookRepositoryTest {
     BookRepository bookRepository;
 
     @Test
+    void testBookNamedQueries() {
+        Book book = bookRepository.jpaNamed("Clean Code");
+
+        assertThat(book).isNotNull();
+    }
+
+    @Test
     void testBookQueryNamed() {
         Book book = bookRepository.findBookByTitleWithQueryNamed("Clean Code");
 
